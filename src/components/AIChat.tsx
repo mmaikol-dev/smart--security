@@ -16,13 +16,14 @@ export function AIChat() {
     {
       id: "welcome",
       type: "ai",
-      content: "Hello! I'm Cchef, your AI security assistant powered by Gemini. I can help you analyze security data and answer questions about your guard dogs, bodyguards, CCTV cameras, and security events. Try asking me something like:\n\n• \"Which dogs were not on patrol yesterday?\"\n• \"How many cameras are offline?\"\n• \"Summarize suspicious activities in the last 24 hours.\"\n• \"Show me the status of all bodyguards.\"\n• \"Give me a complete system overview.\"",
+      content:
+        "Hello! I'm Cchef, your AI assistant powered by Gemini. I can help you with both security-related insights and general questions. Try asking me things like:\n\n• \"Which dogs were not on patrol yesterday?\"\n• \"Summarize suspicious activities in the last 24 hours\"\n• \"What’s the capital of Brazil?\"\n• \"Explain the French Revolution\"\n• \"Translate 'thank you' to Spanish\"\n• \"Generate a security status report\"\n• \"Do some basic math like 34 * 78\"",
       timestamp: new Date(),
     },
   ]);
+
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const processAIQuery = useAction(api.ai.processAIQuery);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,13 +37,13 @@ export function AIChat() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
     try {
       const result = await processAIQuery({ query: input });
-      
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "ai",
@@ -52,7 +53,7 @@ export function AIChat() {
         functionsUsed: result.functionsUsed,
       };
 
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -60,7 +61,7 @@ export function AIChat() {
         content: "I'm sorry, I encountered an error processing your request. Please try again.",
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -72,9 +73,11 @@ export function AIChat() {
     "Summarize suspicious activities in the last 24 hours",
     "Show me all bodyguards on duty",
     "What's the current security status?",
-    "List all critical security events",
+    "What's the capital of Kenya?",
+    "Summarize the French Revolution",
+    "Translate 'hello' to Japanese",
+    "What is 23 multiplied by 48?",
     "Give me a complete system overview",
-    "Which cameras need maintenance?",
   ];
 
   return (
@@ -87,7 +90,9 @@ export function AIChat() {
           </div>
           <div>
             <h2 className="text-xl font-semibold text-gray-900">Cchef AI Assistant</h2>
-            <p className="text-sm text-gray-600">Powered by Gemini • Your intelligent security monitoring companion</p>
+            <p className="text-sm text-gray-600">
+              Powered by Gemini • Ask about security or general knowledge
+            </p>
           </div>
         </div>
       </div>
@@ -96,17 +101,15 @@ export function AIChat() {
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-4xl rounded-lg p-4 ${
-              message.type === "user" 
-                ? "bg-blue-600 text-white" 
-                : "bg-gray-100 text-gray-900"
-            }`}>
+            <div
+              className={`max-w-4xl rounded-lg p-4 ${
+                message.type === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-900"
+              }`}
+            >
               <div className="whitespace-pre-wrap">{message.content}</div>
               <div className="mt-2 text-xs opacity-70 flex items-center space-x-2">
                 <span>{message.timestamp.toLocaleTimeString()}</span>
-                {message.executionTime && (
-                  <span>• ⚡ {message.executionTime}ms</span>
-                )}
+                {message.executionTime && <span>• ⚡ {message.executionTime}ms</span>}
                 {message.functionsUsed && message.functionsUsed.length > 0 && (
                   <span>• 🔧 Used: {message.functionsUsed.join(", ")}</span>
                 )}
@@ -114,13 +117,13 @@ export function AIChat() {
             </div>
           </div>
         ))}
-        
+
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-gray-100 rounded-lg p-4">
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                <span className="text-gray-600">Cchef is analyzing your security data...</span>
+                <span className="text-gray-600">Cchef is thinking...</span>
               </div>
             </div>
           </div>
@@ -145,14 +148,14 @@ export function AIChat() {
         </div>
       )}
 
-      {/* Input */}
+      {/* Input Area */}
       <div className="p-6 border-t bg-gray-50">
         <form onSubmit={handleSubmit} className="flex space-x-3">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask me about your security system..."
+            placeholder="Ask me anything..."
             className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
             disabled={isLoading}
           />
@@ -165,7 +168,7 @@ export function AIChat() {
           </button>
         </form>
         <p className="text-xs text-gray-500 mt-2 text-center">
-          🔒 Powered by Gemini AI • Real-time security data analysis
+          🔒 Powered by Gemini AI • Smart assistant for all your queries
         </p>
       </div>
     </div>
