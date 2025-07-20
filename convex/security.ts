@@ -86,6 +86,8 @@ export const updateGuardDog = mutation({
   },
 });
 
+
+
 export const updateDogStatus = mutation({
   args: {
     dogId: v.id("guardDogs"),
